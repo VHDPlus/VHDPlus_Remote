@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VHDPlus_Remote">
         <activity
+            android:name=".ConnectActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AddActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

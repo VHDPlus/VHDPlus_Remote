@@ -1,5 +1,5 @@
 /*
-    Name: MainActivity
+    Name: AddActivity
     Rev: 1.0
     Creator: Leon Beier
     Date: 08.11.2021
@@ -23,9 +23,8 @@
     WITH THE Java Code OR THE USE OR OTHER DEALINGS IN THE Java Code.
 
     Description:
-    In this code the main recycler view is managed, the wifi connection is controlled,
-    the listener for the "Add Element" button is implemented and this file contains
-    the communication between the AddElement Activity
+    In this code the "New Element" selector and the "Element Settings" List is managed.
+    Also the communication to the MainActivity is implemented
 */
 
 package de.protop_solutions.vhdplus.vhdplus_remote;
@@ -34,11 +33,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_add);
     }
 }
