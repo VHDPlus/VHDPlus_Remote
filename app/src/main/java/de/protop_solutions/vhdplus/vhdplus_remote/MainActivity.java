@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves elements of recycler view in Layout.txt
+     * @throws IOException
+     */
     private void saveElements() throws IOException {
         FileOutputStream outStream = new FileOutputStream(getFilesDir().getPath() + "/Layout.txt");
         ObjectOutputStream objectOutStream = new ObjectOutputStream(outStream);
@@ -98,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
         objectOutStream.close();
     }
 
+    /**
+     * Loads elements from Layout.txt and saves them in the elements list
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void loadElements() throws IOException, ClassNotFoundException {
         File file = new File(getFilesDir().getPath() + "/Layout.txt");
         if(!file.exists()) file.createNewFile();
