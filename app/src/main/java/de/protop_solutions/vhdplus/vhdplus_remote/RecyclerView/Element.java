@@ -33,6 +33,19 @@ import java.util.ArrayList;
 
 public class Element {
 
+    public static final int TYPE_BUTTON = 1;
+    public static final int TYPE_BUTTON3 = 2;
+    public static final int TYPE_LED = 3;
+    public static final int TYPE_LED10 = 4;
+    public static final int TYPE_SWITCH = 5;
+    public static final int TYPE_SWITCH3 = 6;
+    public static final int TYPE_RGBLED = 7;
+    public static final int TYPE_RGBLED10 = 8;
+    public static final int TYPE_DISPLAY = 9;
+    public static final int TYPE_SLIDER = 10;
+    public static final int TYPE_JOYSTICK = 11;
+    public static final int TYPE_CONSOLE = 12;
+
     private int type = 0;
 
     public int getType() {
