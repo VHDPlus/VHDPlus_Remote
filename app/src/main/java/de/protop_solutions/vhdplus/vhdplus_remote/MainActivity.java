@@ -31,7 +31,10 @@
 package de.protop_solutions.vhdplus.vhdplus_remote;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView.Element;
+import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView.ElementListAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String ip;
 
+    private RecyclerView recyclerView;
+    private ElementListAdapter adapter;
     private ArrayList<Element> elements;
 
     @Override
@@ -68,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Load last elements in recycler view
+        elements = new ArrayList<>();
         try {
             loadElements();
         } catch (IOException e) {
@@ -75,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
+        // set adapter
+        recyclerView = findViewById(R.id.recyclerview);
+        adapter = new ElementListAdapter(this, elements);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.getItemAnimator().setChangeDuration(0);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
