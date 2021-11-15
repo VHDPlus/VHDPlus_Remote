@@ -4,10 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/drawable/ic_arrow_drop_down_24dp.xml" value="0.1" />
+        <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/drawable/ic_led_24dp.xml" value="0.1" />
         <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/drawable/spinner_background.xml" value="0.1" />
         <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/activity_add.xml" value="0.2359375" />
         <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/activity_connect.xml" value="0.2" />
         <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/button3_layout.xml" value="0.1" />
+        <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/console_layout.xml" value="0.10099637681159421" />
+        <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/led10_layout.xml" value="0.1" />
+        <entry key="..\:/Users/LeonB/Documents/GitHub/VHDPlus_Remote/app/src/main/res/layout/string_setting_layout.xml" value="0.1" />
       </map>
     </option>
   </component>

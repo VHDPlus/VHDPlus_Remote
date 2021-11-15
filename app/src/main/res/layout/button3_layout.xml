@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/element_height"
+    android:layout_margin="1dp"
+    android:background="@color/black_700"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <Button
+        android:id="@+id/myButton1"
+        android:textColor="@color/white"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="Enable" />
+
+    <Button
+        android:id="@+id/myButton2"
+        android:textColor="@color/white"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="Enable" />
+
+    <Button
+        android:id="@+id/myButton3"
+        android:textColor="@color/white"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="Enable" />
+
+
+</LinearLayout>

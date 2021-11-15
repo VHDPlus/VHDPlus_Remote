@@ -9,6 +9,5 @@
     <string name="mobile_connection">Mobile Connection</string>
     <string name="port">Port:</string>
     <string name="port_default">60</string>
-    <string name="connect">Connect</string>
     <string name="add">Add</string>
 </resources>
