@@ -27,15 +27,12 @@
     Handles different types of elements in the recycler view
 */
 
-package de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView;
+package de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,14 +40,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.R;
 
@@ -271,8 +266,8 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     /**
-     * Returns elements in element list
-     * @return Elements in element list
+     * Returns number of elements in element list
+     * @return Number of elements in element list
      */
     @Override
     public int getItemCount() {

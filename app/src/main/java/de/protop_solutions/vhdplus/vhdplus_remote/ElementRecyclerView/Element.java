@@ -26,12 +26,12 @@
     This class stores the attributes of elements in the recycler view
 */
 
-package de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView;
+package de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Element {
+public class Element implements Serializable {
 
     public static final int TYPE_BUTTON = 1;
     public static final int TYPE_BUTTON3 = 2;

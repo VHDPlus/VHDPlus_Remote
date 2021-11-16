@@ -30,15 +30,20 @@
 
 package de.protop_solutions.vhdplus.vhdplus_remote;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView.Element;
-import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerView.ElementListAdapter;
+import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.Element;
+import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.ElementListAdapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //Open AddActivity after "Add" button pressed
         findViewById(R.id.addButton).setOnClickListener(view -> {
             final Intent intent = new Intent(getApplicationContext() , AddActivity.class);
-            startActivity(intent);
+            addActivityResultLauncher.launch(intent);
         });
 
         //Load last elements in recycler view
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // set adapter
+        //Initialize recycler view adapter
         recyclerView = findViewById(R.id.recyclerview);
         adapter = new ElementListAdapter(this, elements);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -96,12 +101,33 @@ public class MainActivity extends AppCompatActivity {
         //Saves elements in recycler view when activity stopped
         //For example when "Add" button pressed or application closed
         //If application reopened -> can restore elements
+        Log.v("Test", "Stop");
         try {
             saveElements();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Handles result of add activity and adds element
+     */
+    ActivityResultLauncher<Intent> addActivityResultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Element element = new Element();
+                    Intent data = result.getData();
+                    element.setType(data.getIntExtra("type", 1));
+                    element.setHooks(data.getStringArrayListExtra("hooks"));
+                    element.setNames(data.getStringArrayListExtra("names"));
+
+                    adapter.addElement(element);
+                }
+            }
+        });
 
     /**
      * Saves elements of recycler view in Layout.txt

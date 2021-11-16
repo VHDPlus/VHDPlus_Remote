@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="element_array">
+        <item>Button with Label</item>
+        <item>3 Buttons</item>
+        <item>LED with Label</item>
+        <item>10 LEDs</item>
+        <item>Switch with Label</item>
+        <item>3 Switches</item>
+        <item>RGB LED with Label</item>
+        <item>10 RGB LEDs</item>
+        <item>Value Display</item>
+        <item>Slider</item>
+        <item>Joystick</item>
+        <item>Console</item>
+        <item>Plotter</item>
+        <item>Video</item>
+    </string-array>
+</resources>
