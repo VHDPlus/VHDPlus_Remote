@@ -45,17 +45,28 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
 
+    //Selected element type
     private Spinner typeSpinner;
+    //Recycler view with settings for element
     private RecyclerView recyclerView;
+    //Adapter for settings list for background functions
     private SettingListAdapter adapter;
+    //List of settings for selected element type
     private ArrayList<Setting> settings;
+    //Hooks of elements in main activity depending on element type
+    private ArrayList<String>[] usedHooks = new ArrayList[12];
+    //Elements in list in main activity
+    private ArrayList<Element> elements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +105,12 @@ public class AddActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.settingRecyclerView);
         createList();
+
+        try {
+            loadHooks();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -145,18 +162,59 @@ public class AddActivity extends AppCompatActivity {
         addSettings(s);
 
         //Initialize recycler view adapter
-        adapter = new SettingListAdapter(this, settings, typeSpinner.getSelectedItemPosition()+1);
+        adapter = new SettingListAdapter(this, settings, typeSpinner.getSelectedItemPosition()+1, usedHooks, recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getApplication()));
         recyclerView.setAdapter(adapter);
     }
 
     //Create setting list from string array from element_settings.xml
     private void addSettings(List<String> s){
+        ArrayList<String> newHooks = new ArrayList<>();
         for (int i = 0; i < s.size() / 2; i++) {
             Setting setting = new Setting();
             setting.setName(s.get(i * 2));
-            setting.setValue(s.get(i * 2 + 1));
+            if (s.get(i * 2).contains("Hook")) {
+                int h = 1;
+                ArrayList<String> hooks = usedHooks[Element.getBaseType(typeSpinner.getSelectedItemPosition(),true)];
+                for (; (hooks != null && hooks.contains(h+"")) || newHooks.contains((h+"")) ; h++) ;
+                setting.setValue(h+"");
+                newHooks.add(h+"");
+            } else {
+                setting.setValue(s.get(i * 2 + 1));
+            }
             settings.add(setting);
         }
+    }
+
+    /**
+     * Loads elements of main activity
+     * Searches elements for hooks
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void loadHooks() throws IOException, ClassNotFoundException {
+        loadElements();
+        for (Element e: elements) {
+            for (String s: e.getHooks()) {
+                if (usedHooks[Element.getBaseType(e.getType(),false)-1] == null) usedHooks[Element.getBaseType(e.getType(),false)-1] = new ArrayList<>();
+                usedHooks[Element.getBaseType(e.getType(),false)-1].add(s);
+            }
+        }
+    }
+
+    /**
+     * Loads elements from Layout.txt and saves them in the elements list
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void loadElements() throws IOException, ClassNotFoundException {
+        File file = new File(getFilesDir().getPath() + "/Layout.txt");
+        if(!file.exists()) file.createNewFile();
+        FileInputStream inStream = new FileInputStream(file);
+        ObjectInputStream objectInStream = new ObjectInputStream(inStream);
+        int count = objectInStream.readInt();
+        elements = new ArrayList<>();
+        for (int c=0; c < count; c++) elements.add((Element) objectInStream.readObject());
+        objectInStream.close();
     }
 }

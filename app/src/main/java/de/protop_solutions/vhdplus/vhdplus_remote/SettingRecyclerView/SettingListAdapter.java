@@ -52,12 +52,18 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ArrayList<Setting> settings;
     //Element type for this settings
     private int type = 1;
+    //List of used hooks to compare with hooks in list
+    private ArrayList<String>[] usedHooks;
+    //Recycler view needed to find view holders
+    RecyclerView recyclerView;
 
     //Constructor
-    public SettingListAdapter(Context context, ArrayList<Setting> settings, int type) {
+    public SettingListAdapter(Context context, ArrayList<Setting> settings, int type, ArrayList<String>[] usedHooks, RecyclerView recyclerView) {
         this.context = context;
         this.settings = settings;
         this.type = type;
+        this.usedHooks = usedHooks;
+        this.recyclerView = recyclerView;
     }
 
     /**
@@ -92,9 +98,39 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             @Override
             public void afterTextChanged(Editable editable) {
+                for (int pos = 0; pos < settings.size(); pos++) {
+                    NameViewHolder nameViewHolder = ((NameViewHolder) recyclerView.findViewHolderForAdapterPosition(pos));
+                    if (nameViewHolder != null) {
+                        String value = nameViewHolder.txtValue.getText().toString();
 
+                        Setting set = settings.get(pos);
+                        set.setValue(value);
+                        settings.set(pos, set);
+
+                        if (settings.get(pos).getName().contains("Hook") && hookAlreadyUsed(value, pos))
+                            nameViewHolder.txtValue.setBackgroundTintList(context.getApplicationContext().getResources().getColorStateList(R.color.red));
+                        else
+                            nameViewHolder.txtValue.setBackgroundTintList(context.getApplicationContext().getResources().getColorStateList(R.color.white));
+                    }
+                }
             }
         });
+    }
+
+    /**
+     * Checks hooks of elements and current element to set up
+     * Returns true if hook exists for different ui element
+     * @param hook hook to compare
+     * @param position index of hook in settings list
+     * @return
+     */
+    private boolean hookAlreadyUsed(String hook, int position){
+        ArrayList<String> hooks = usedHooks[Element.getBaseType(type,false)-1];
+        if (hooks != null && hooks.contains(hook)) return true;
+        for (Setting s: settings) {
+            if (s.getName().contains("Hook") && s.getValue().equals(hook) && settings.indexOf(s) != position) return true;
+        }
+        return false;
     }
 
     /**

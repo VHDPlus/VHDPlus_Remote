@@ -55,10 +55,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    //IP from connect activity
     private String ip;
-
+    //Recycler view with elements
     private RecyclerView recyclerView;
+    //Adapter for background functions
     private ElementListAdapter adapter;
+    //elements in recycler view
     private ArrayList<Element> elements;
 
     @Override
@@ -73,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
         //Open AddActivity after "Add" button pressed
         findViewById(R.id.addButton).setOnClickListener(view -> {
+            //Saves elements in recycler view when activity stopped
+            //For example when "Add" button pressed or application closed
+            //If application reopened -> can restore elements
+            try {
+                saveElements();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             final Intent intent = new Intent(getApplicationContext() , AddActivity.class);
             addActivityResultLauncher.launch(intent);
         });
@@ -93,20 +104,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.getItemAnimator().setChangeDuration(0);
         recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        //Saves elements in recycler view when activity stopped
-        //For example when "Add" button pressed or application closed
-        //If application reopened -> can restore elements
-        Log.v("Test", "Stop");
-        try {
-            saveElements();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -155,5 +152,19 @@ public class MainActivity extends AppCompatActivity {
         elements = new ArrayList<>();
         for (int c=0; c < count; c++) elements.add((Element) objectInStream.readObject());
         objectInStream.close();
+    }
+
+    /**
+     * Save elements when main activity destroyed
+     */
+    @Override
+    protected void onDestroy()
+    {
+        try {
+            saveElements();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 }

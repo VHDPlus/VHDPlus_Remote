@@ -83,4 +83,36 @@ public class Element implements Serializable {
     public void setValues(ArrayList<String> values) {
         this.values = values;
     }
+
+    /**
+     * Returns type of element
+     * E.g.: 3 buttons -> button, 10 RGB LEDs -> RGB LED
+     * @param type
+     * @param arrayIndex
+     * @return
+     */
+    public static int getBaseType(int type, boolean arrayIndex){
+        if (arrayIndex) type++;
+        switch (type){
+            case Element.TYPE_BUTTON:
+            case Element.TYPE_BUTTON3:
+            case Element.TYPE_JOYSTICK:
+                type = Element.TYPE_BUTTON;
+                break;
+            case Element.TYPE_LED:
+            case Element.TYPE_LED10:
+                type = Element.TYPE_LED;
+                break;
+            case Element.TYPE_SWITCH:
+            case Element.TYPE_SWITCH3:
+                type = Element.TYPE_SWITCH;
+                break;
+            case Element.TYPE_RGBLED:
+            case Element.TYPE_RGBLED10:
+                type = Element.TYPE_RGBLED;
+                break;
+        }
+        if (arrayIndex) type--;
+        return type;
+    }
 }
