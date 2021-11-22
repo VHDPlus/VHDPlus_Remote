@@ -31,8 +31,10 @@ package de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,8 +46,10 @@ import android.widget.TextView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.R;
 
@@ -184,6 +188,19 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case Element.TYPE_SLIDER:
                 ((SliderViewHolder) holder).setSliderDetails(elements.get(position));
+                //Add broadcast to swipe handler to disable swipe to delete/edit when slider is used
+                ((SliderViewHolder) holder).mySlider.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        Intent intent = new Intent("swipe");
+                        boolean action = true;
+                        if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) intent.putExtra("enable", false);
+                        else if(motionEvent.getAction() == MotionEvent.ACTION_UP) intent.putExtra("enable", true);
+                        else action = false;
+                        if (action) LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                        return false;
+                    }
+                });
                 ((SliderViewHolder) holder).mySlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) { }
@@ -272,6 +289,18 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemCount() {
         return elements.size();
+    }
+
+    /**
+     *
+     * @param fromPosition
+     * @param toPosition
+     * @return
+     */
+    public boolean swapElement(int fromPosition, int toPosition) {
+        Collections.swap(elements, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     /**

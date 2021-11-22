@@ -68,6 +68,9 @@ public class AddActivity extends AppCompatActivity {
     //Elements in list in main activity
     private ArrayList<Element> elements;
 
+    private boolean edit = false;
+    private Element editItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +98,7 @@ public class AddActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 createList();
+                edit = false;
             }
 
             @Override
@@ -102,6 +106,18 @@ public class AddActivity extends AppCompatActivity {
                 createList();
             }
         });
+
+        //Get edit element
+        Bundle extras = getIntent().getExtras();
+        edit = false;
+        editItem = null;
+        if (extras != null) {
+            editItem = (Element) extras.get("edit");
+            if (editItem != null){
+                typeSpinner.setSelection(editItem.getType()-1);
+                edit = true;
+            }
+        }
 
         recyclerView = (RecyclerView) findViewById(R.id.settingRecyclerView);
         createList();
@@ -159,7 +175,7 @@ public class AddActivity extends AppCompatActivity {
                 s = Arrays.asList(getResources().getStringArray(R.array.console_array));
                 break;
         }
-        addSettings(s);
+        loadSettings(s, editItem);
 
         //Initialize recycler view adapter
         adapter = new SettingListAdapter(this, settings, typeSpinner.getSelectedItemPosition()+1, usedHooks, recyclerView);
@@ -167,20 +183,37 @@ public class AddActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    //Create setting list from string array from element_settings.xml
-    private void addSettings(List<String> s){
+    /**
+     * Create setting list from string array from element_settings.xml or from element to edit
+     * @param s
+     * @param e
+     */
+    private void loadSettings(List<String> s, Element e){
+        int h = 0;
+        int n = 0;
         ArrayList<String> newHooks = new ArrayList<>();
         for (int i = 0; i < s.size() / 2; i++) {
             Setting setting = new Setting();
             setting.setName(s.get(i * 2));
             if (s.get(i * 2).contains("Hook")) {
-                int h = 1;
-                ArrayList<String> hooks = usedHooks[Element.getBaseType(typeSpinner.getSelectedItemPosition(),true)];
-                for (; (hooks != null && hooks.contains(h+"")) || newHooks.contains((h+"")) ; h++) ;
-                setting.setValue(h+"");
-                newHooks.add(h+"");
+                if (e == null) {
+                    h = 1;
+                    ArrayList<String> hooks = usedHooks[Element.getBaseType(typeSpinner.getSelectedItemPosition(), true)];
+                    for (; (hooks != null && hooks.contains(h + "")) || newHooks.contains((h + "")); h++)
+                        ;
+                    setting.setValue(h + "");
+                    newHooks.add(h + "");
+                }else{
+                    if(e.getHooks().size() > h) setting.setValue(e.getHooks().get(h));
+                    newHooks.add(e.getHooks().get(h));
+                    h++;
+                }
             } else {
-                setting.setValue(s.get(i * 2 + 1));
+                if (e == null) setting.setValue(s.get(i * 2 + 1));
+                else {
+                    if(e.getNames().size() > n) setting.setValue(e.getNames().get(n));
+                    n++;
+                }
             }
             settings.add(setting);
         }

@@ -34,16 +34,25 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.Element;
 import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.ElementListAdapter;
+import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerViewCallbacks.DragAndDropCallback;
+import de.protop_solutions.vhdplus.vhdplus_remote.RecyclerViewCallbacks.SwipeCallback;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,10 +73,20 @@ public class MainActivity extends AppCompatActivity {
     //elements in recycler view
     private ArrayList<Element> elements;
 
+    SwipeCallback swipeToDeleteCallback;
+    SwipeCallback swipeToEditCallback;
+    private ConstraintLayout layout;
+
+    private boolean edit = false;
+    private int editPosition;
+    private Element lastElement;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        layout = findViewById(R.id.container);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -76,16 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Open AddActivity after "Add" button pressed
         findViewById(R.id.addButton).setOnClickListener(view -> {
-            //Saves elements in recycler view when activity stopped
-            //For example when "Add" button pressed or application closed
-            //If application reopened -> can restore elements
-            try {
-                saveElements();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            final Intent intent = new Intent(getApplicationContext() , AddActivity.class);
-            addActivityResultLauncher.launch(intent);
+            startAddActivity(null);
         });
 
         //Load last elements in recycler view
@@ -104,25 +114,48 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.getItemAnimator().setChangeDuration(0);
         recyclerView.setAdapter(adapter);
+
+        //Add callbacks
+        enableSwipeToDeleteAndUndo();
+        enableSwipeToEdit();
+        enableDragAndDrop();
+    }
+
+    private void startAddActivity(Element item){
+        //Saves elements in recycler view when activity stopped
+        //For example when "Add" button pressed or application closed
+        //If application reopened -> can restore elements
+        try {
+            saveElements();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final Intent intent = new Intent(getApplicationContext() , AddActivity.class);
+        intent.putExtra("edit", item);
+        addActivityResultLauncher.launch(intent);
     }
 
     /**
      * Handles result of add activity and adds element
+     * If element edited, inserts element in last position
      */
     ActivityResultLauncher<Intent> addActivityResultLauncher = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
         new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
-                if (result.getResultCode() == Activity.RESULT_OK) {
+                if (result.getResultCode() == Activity.RESULT_OK || edit) {
                     Element element = new Element();
-                    Intent data = result.getData();
-                    element.setType(data.getIntExtra("type", 1));
-                    element.setHooks(data.getStringArrayListExtra("hooks"));
-                    element.setNames(data.getStringArrayListExtra("names"));
-
-                    adapter.addElement(element);
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        element.setType(data.getIntExtra("type", 1));
+                        element.setHooks(data.getStringArrayListExtra("hooks"));
+                        element.setNames(data.getStringArrayListExtra("names"));
+                    } else element = lastElement;
+                    if (edit) adapter.insertElement(element, editPosition);
+                    else adapter.addElement(element);
                 }
+                edit = false;
             }
         });
 
@@ -155,6 +188,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Attach swipe left callback
+     * Deletes elememt and shows snackbar to undo
+     */
+    private void enableSwipeToDeleteAndUndo() {
+        swipeToDeleteCallback = new SwipeCallback(this, 0) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                final int position = viewHolder.getAdapterPosition();
+                final Element item = adapter.getElements().get(position);
+
+                adapter.removeElement(position);
+
+                Snackbar snackbar = Snackbar.make(layout, "Element was removed", Snackbar.LENGTH_LONG);
+                snackbar.setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        adapter.insertElement(item, position);
+                        recyclerView.scrollToPosition(position);
+                    }
+                });
+
+                snackbar.setActionTextColor(getResources().getColor(R.color.blue_500));
+                snackbar.show();
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    /**
+     * Attach swipe right callback
+     * Removes element to edit and saves removed item to restore if not edited
+     * Start add activity with element to edit
+     */
+    private void enableSwipeToEdit() {
+        swipeToEditCallback = new SwipeCallback(this, 1) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+                final int position = viewHolder.getAdapterPosition();
+                final Element item = adapter.getElements().get(position);
+
+                edit = true;
+                editPosition = position;
+                lastElement = item;
+                adapter.removeElement(position);
+
+                startAddActivity(item);
+
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToEditCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    /**
+     * Attach drag and drop callback
+     */
+    private void enableDragAndDrop() {
+        DragAndDropCallback dragAndDropCallback = new DragAndDropCallback(this, adapter);
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(dragAndDropCallback);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    /**
      * Save elements when main activity destroyed
      */
     @Override
@@ -165,6 +266,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        swipeToDeleteCallback.destroy();
+        swipeToEditCallback.destroy();
         super.onDestroy();
     }
 }
