@@ -57,6 +57,11 @@ public class ConnectActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        findViewById(R.id.legalNoticeButton).setOnClickListener(view -> {
+            final Intent intent = new Intent(getApplicationContext() , LegalNotice.class);
+            startActivity(intent);
+        });
+
         //Set editTextIP text to last IP address
         try {
             loadLastIP();
