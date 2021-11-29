@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VHDPlus_Remote</string>
+    <string name="app_name">VHDPlus Remote</string>
     <string name="save">Save</string>
     <string name="type">Type</string>
     <string name="local_connection">Local Connection</string>
