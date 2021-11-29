@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize recycler view adapter
         recyclerView = findViewById(R.id.recyclerview);
-        adapter = new ElementListAdapter(this, elements);
+        adapter = new ElementListAdapter(this, elements, ip);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.getItemAnimator().setChangeDuration(0);
         recyclerView.setAdapter(adapter);
@@ -119,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
         enableSwipeToDeleteAndUndo();
         enableSwipeToEdit();
         enableDragAndDrop();
+
+        //Start listening for WiFi module
+        adapter.onStart();
     }
 
     private void startAddActivity(Element item){
@@ -253,6 +256,24 @@ public class MainActivity extends AppCompatActivity {
         DragAndDropCallback dragAndDropCallback = new DragAndDropCallback(this, adapter);
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(dragAndDropCallback);
         itemTouchhelper.attachToRecyclerView(recyclerView);
+    }
+
+    /**
+     * Starts listening to wifi module for new element data
+     */
+    @Override
+    protected void onStart() {
+        adapter.onStart();
+        super.onStart();
+    }
+
+    /**
+     * Stops listening to wifi module for new element data
+     */
+    @Override
+    protected void onPause(){
+        adapter.onStop();
+        super.onPause();
     }
 
     /**

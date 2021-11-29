@@ -30,9 +30,11 @@
 package de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,16 +44,21 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.R;
+import de.protop_solutions.vhdplus.vhdplus_remote.WiFi.WiFiConnection;
+import de.protop_solutions.vhdplus.vhdplus_remote.WiFi.WiFiTimer;
 
 public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
@@ -60,10 +67,37 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     //Elements in recycler view
     private ArrayList<Element> elements;
 
+    //Object that handles requests to WiFi module
+    private WiFiConnection wifi;
+    //Timer that checks for new LED, Console, Display... data every half second
+    private WiFiTimer wifiTimer;
+    //Defined IP of wifi module
+    private String ip;
+
+    //Last position in elements of console where user pressed send button
+    int lastConsolePosition = 0;
+
     //Constructor
-    public ElementListAdapter(Context context, ArrayList<Element> elements){
+    public ElementListAdapter(Context context, ArrayList<Element> elements, String ip){
         this.context = context;
         this.elements = elements;
+        wifi = new WiFiConnection(context, elements);
+        wifiTimer = new WiFiTimer(context, this, wifi, ip, 500);
+        this.ip = ip;
+    }
+
+    /**
+     * Starts listening to wifi module for new element data
+     */
+    public void onStart(){
+        wifiTimer.startWiFiConnection();
+    }
+
+    /**
+     * Stops listening to wifi module for new element data
+     */
+    public void onStop(){
+        wifiTimer.stopWiFiConnection();
     }
 
     /**
@@ -141,19 +175,19 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case Element.TYPE_BUTTON:
                 ((ButtonViewHolder) holder).setButtonDetails(elements.get(position));
                 ((ButtonViewHolder) holder).myButton.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(0));
                 });
                 break;
             case Element.TYPE_BUTTON3:
                 ((Button3ViewHolder) holder).setButton3Details(elements.get(position));
                 ((Button3ViewHolder) holder).myButton1.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(0));
                 });
                 ((Button3ViewHolder) holder).myButton2.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(1));
                 });
                 ((Button3ViewHolder) holder).myButton3.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(2));
                 });
                 break;
             case Element.TYPE_LED:
@@ -165,19 +199,19 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case Element.TYPE_SWITCH:
                 ((SwitchViewHolder) holder).setButtonDetails(elements.get(position));
                 ((SwitchViewHolder) holder).mySwitch.setOnClickListener(view -> {
-
+                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" + (((SwitchViewHolder) holder).mySwitch.isChecked() ? 1:0));
                 });
                 break;
             case Element.TYPE_SWITCH3:
                 ((Switch3ViewHolder) holder).setSwitch3Details(elements.get(position));
                 ((Switch3ViewHolder) holder).mySwitch1.setOnClickListener(view -> {
-
+                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" + (((Switch3ViewHolder) holder).mySwitch1.isChecked() ? 1:0));
                 });
                 ((Switch3ViewHolder) holder).mySwitch2.setOnClickListener(view -> {
-
+                    sendWiFi("s", elements.get(position).getHooks().get(1) + "~" + (((Switch3ViewHolder) holder).mySwitch2.isChecked() ? 1:0));
                 });
                 ((Switch3ViewHolder) holder).mySwitch3.setOnClickListener(view -> {
-
+                    sendWiFi("s", elements.get(position).getHooks().get(2) + "~" + (((Switch3ViewHolder) holder).mySwitch3.isChecked() ? 1:0));
                 });
                 break;
             case Element.TYPE_RGBLED:
@@ -208,7 +242,7 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public void onStartTrackingTouch(SeekBar seekBar) { }
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-
+                        sendWiFi("i", elements.get(position).getHooks().get(0) + "~" + (((SliderViewHolder) holder).mySlider.getProgress()));
                     }
                 });
                 break;
@@ -218,28 +252,52 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case Element.TYPE_JOYSTICK:
                 ((JoystickViewHolder) holder).setJoystickDetails(elements.get(position));
                 ((JoystickViewHolder) holder).myButtonF.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(0));
                 });
                 ((JoystickViewHolder) holder).myButtonL.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(1));
                 });
                 ((JoystickViewHolder) holder).myButtonS.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(2));
                 });
                 ((JoystickViewHolder) holder).myButtonR.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(3));
                 });
                 ((JoystickViewHolder) holder).myButtonB.setOnClickListener(view -> {
-
+                    sendWiFi("b", elements.get(position).getHooks().get(4));
                 });
                 break;
             case Element.TYPE_CONSOLE:
                 ((ConsoleViewHolder) holder).setConsoleDetails(elements.get(position));
                 ((ConsoleViewHolder) holder).btnSend.setOnClickListener(view -> {
-
+                    lastConsolePosition = position;
+                    sendWiFi("c", elements.get(position).getHooks().get(0) + "~" + (((ConsoleViewHolder) holder).txtOut.getText().toString()));
                 });
                 break;
         }
+    }
+
+    /**
+     * Send data to wifi module
+     * Checks if Internet connection exists
+     * @param type
+     * @param data
+     */
+    private void sendWiFi(String type, String data){
+        if (wifi.checkConnection()) {
+            Toast.makeText(this.context, "Send to " + ip + ": " + data, Toast.LENGTH_SHORT).show();
+            wifi.sendData(ip, type, data);
+        }
+        else
+            Toast.makeText(this.context, "No Internet Connection", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Last position in elements of console where user pressed send button
+     * @return
+     */
+    public int getLastConsolePosition(){
+        return lastConsolePosition;
     }
 
     /**
