@@ -57,6 +57,15 @@ public class ConnectActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        //Open MainActivity after "Connect" button for mobile connection pressed
+        //Adds IP Address and Port to intent extras
+        findViewById(R.id.connectButtonMobile).setOnClickListener(view -> {
+            final Intent intent = new Intent(getApplicationContext() , MainActivity.class);
+            intent.putExtra("IP", ((EditText) findViewById(R.id.editTextIP)).getText().toString());
+            intent.putExtra("Port", ((EditText) findViewById(R.id.editTextPort)).getText().toString());
+            startActivity(intent);
+        });
+
         findViewById(R.id.legalNoticeButton).setOnClickListener(view -> {
             final Intent intent = new Intent(getApplicationContext() , LegalNotice.class);
             startActivity(intent);
@@ -65,6 +74,7 @@ public class ConnectActivity extends AppCompatActivity {
         //Set editTextIP text to last IP address
         try {
             loadLastIP();
+            loadLastPort();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,6 +88,7 @@ public class ConnectActivity extends AppCompatActivity {
         //If application reopened -> can restore text
         try {
             saveLastIP();
+            saveLastPort();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,6 +121,36 @@ public class ConnectActivity extends AppCompatActivity {
             stream.read(data);
             stream.close();
             ((EditText)findViewById(R.id.editTextIP)).setText(new String(data, StandardCharsets.UTF_8));
+        }
+    }
+
+    /**
+     * Saves Port from editTextPort in Port.txt
+     * @throws IOException
+     */
+    private void saveLastPort() throws IOException {
+        File file = new File(getFilesDir().getPath() + "/Port.txt");
+        if(!file.exists()) file.createNewFile();
+        FileOutputStream stream = new FileOutputStream(file);
+        try {
+            stream.write(((EditText)findViewById(R.id.editTextPort)).getText().toString().getBytes());
+        } finally {
+            stream.close();
+        }
+    }
+
+    /**
+     * Loads Port from Port.txt and sets editTextPort text
+     * @throws IOException
+     */
+    private void loadLastPort() throws IOException {
+        File file = new File(getFilesDir().getPath() + "/Port.txt");
+        if(file.exists()) {
+            FileInputStream stream = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
+            stream.read(data);
+            stream.close();
+            ((EditText)findViewById(R.id.editTextPort)).setText(new String(data, StandardCharsets.UTF_8));
         }
     }
 }

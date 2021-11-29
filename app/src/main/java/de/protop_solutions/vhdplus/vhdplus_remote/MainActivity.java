@@ -90,7 +90,12 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            ip = extras.getString("IP");
+            ip = extras.getString("IP").trim();
+            if(extras.containsKey("Port")){
+                String port = extras.getString("Port");
+                if (port.length() > 0)
+                    ip += ":" + port.trim();
+            }
         }
 
         //Open AddActivity after "Add" button pressed
