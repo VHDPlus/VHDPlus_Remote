@@ -35,6 +35,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,6 +60,7 @@ import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.protop_solutions.vhdplus.vhdplus_remote.R;
+import de.protop_solutions.vhdplus.vhdplus_remote.SettingRecyclerView.Setting;
 import de.protop_solutions.vhdplus.vhdplus_remote.WiFi.WiFiConnection;
 import de.protop_solutions.vhdplus.vhdplus_remote.WiFi.WiFiTimer;
 
@@ -272,6 +276,29 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ConsoleViewHolder) holder).btnSend.setOnClickListener(view -> {
                     lastConsolePosition = position;
                     sendWiFi("c", elements.get(position).getHooks().get(0) + "~" + (((ConsoleViewHolder) holder).txtOut.getText().toString()));
+                });
+                ((ConsoleViewHolder) holder).txtOut.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        Element thisElement = new Element();
+                        for (Element e: elements){
+                            if (e.getType() == Element.TYPE_CONSOLE && e.getHooks().get(0) == ((ConsoleViewHolder) holder).hook) {
+                                thisElement = e;
+                                break;
+                            }
+                        }
+                        ArrayList<String> v = thisElement.getValues();
+                        if (v == null) v = new ArrayList<>();
+                        if (v.size() == 0) v.add("");
+                        if (v.size() > 1) v.set(1, charSequence.toString());
+                        else v.add(charSequence.toString());
+                        thisElement.setValues(v);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) { }
                 });
                 break;
         }
@@ -649,18 +676,25 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView txtIn;
         private EditText txtOut;
         private Button btnSend;
+        private String hook;
 
         ConsoleViewHolder(@NonNull View itemView) {
             super(itemView);
             txtIn = itemView.findViewById(R.id.txtIn);
             txtOut = itemView.findViewById(R.id.txtOut);
             btnSend = itemView.findViewById(R.id.btnSend);
+            hook = "";
         }
 
         void setConsoleDetails(Element element) {
             txtOut.setHint(element.getNames().get(0));
             btnSend.setText(element.getNames().get(1));
             if (element.getValues() != null && element.getValues().size() > 0) txtIn.setText(element.getValues().get(0));
+            else txtIn.setText("");
+            if (element.getValues() != null && element.getValues().size() > 1) txtOut.setText(element.getValues().get(1));
+            else txtOut.setText("");
+            txtOut.setSelection(txtOut.getText().length());
+            hook = element.getHooks().get(0);
         }
     }
 }

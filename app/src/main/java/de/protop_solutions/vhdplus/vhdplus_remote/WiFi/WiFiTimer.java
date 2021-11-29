@@ -219,11 +219,11 @@ public class WiFiTimer {
                             case Element.TYPE_LED:
                             case Element.TYPE_RGBLED:
                             case Element.TYPE_DISPLAY:
-                                //case Element.TYPE_CONSOLE:
+                            case Element.TYPE_CONSOLE:
                                 v = e.getValues();
                                 if (v == null || v.size() == 0 || !v.get(0).equals(r[i])) {
-                                    v = new ArrayList<>();
-                                    v.add(r[i]);
+                                    if (v.size() > 0) v.set(0, r[i]);
+                                    else v.add(r[i]);
                                     e.setValues(v);
                                     adapter.notifyItemChanged(adapter.getElements().indexOf(e));
                                 }
@@ -259,6 +259,7 @@ public class WiFiTimer {
                     if (v == null || v.size() == 0 || !v.get(0).equals(r[1])) {
                         v = new ArrayList<>();
                         v.add(r[1]);
+                        v.add("");
                         e.setValues(v);
                         adapter.notifyItemChanged(adapter.getElements().indexOf(e));
                     }
