@@ -55,7 +55,8 @@ public class WiFiConnection {
      * @return
      */
     public boolean checkConnection(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null){
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
             if (activeNetworkInfo.isConnected()) return true;
@@ -73,7 +74,8 @@ public class WiFiConnection {
      * @param data
      */
     public void sendData(String ipAddress, String type, String data) {
-        WiFiRequest wifiRequest = new WiFiRequest(this.context, ipAddress, "send", type, data, true);
+        WiFiRequest wifiRequest = new WiFiRequest(this.context, ipAddress,
+                "send", type, data, true);
         wifiRequest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -108,7 +110,8 @@ public class WiFiConnection {
             }
         }
         if (hooks != ""){
-            WiFiRequest connectionAsyncTask = new WiFiRequest(this.context, ipAddress, "read", "hooks", hooks, false);
+            WiFiRequest connectionAsyncTask = new WiFiRequest(this.context, ipAddress,
+                    "read", "hooks", hooks, false);
             connectionAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }

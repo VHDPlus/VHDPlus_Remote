@@ -151,7 +151,6 @@ abstract public class SwipeCallback extends ItemTouchHelper.Callback {
         int itemHeight = itemView.getHeight();
 
         boolean isCancelled = dX == 0 && !isCurrentlyActive;
-
         if (isCancelled) {
             if (type == 0)
                 clearCanvas(c, itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
@@ -162,8 +161,10 @@ abstract public class SwipeCallback extends ItemTouchHelper.Callback {
         }
 
         backgroundDrawable.setColor(backgroundColor);
-        if (type == 0) backgroundDrawable.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-        else backgroundDrawable.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
+        if (type == 0) backgroundDrawable.setBounds(itemView.getRight() + (int) dX,
+                itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        else backgroundDrawable.setBounds(itemView.getLeft(), itemView.getTop(),
+                itemView.getLeft() + (int) dX, itemView.getBottom());
         backgroundDrawable.draw(c);
 
         int deleteIconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
@@ -179,10 +180,8 @@ abstract public class SwipeCallback extends ItemTouchHelper.Callback {
         }
         int deleteIconBottom = deleteIconTop + intrinsicHeight;
 
-
         deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
         deleteDrawable.draw(c);
-
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }
 

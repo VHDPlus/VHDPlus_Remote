@@ -203,19 +203,23 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case Element.TYPE_SWITCH:
                 ((SwitchViewHolder) holder).setButtonDetails(elements.get(position));
                 ((SwitchViewHolder) holder).mySwitch.setOnClickListener(view -> {
-                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" + (((SwitchViewHolder) holder).mySwitch.isChecked() ? 1:0));
+                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" +
+                            (((SwitchViewHolder) holder).mySwitch.isChecked() ? 1:0));
                 });
                 break;
             case Element.TYPE_SWITCH3:
                 ((Switch3ViewHolder) holder).setSwitch3Details(elements.get(position));
                 ((Switch3ViewHolder) holder).mySwitch1.setOnClickListener(view -> {
-                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" + (((Switch3ViewHolder) holder).mySwitch1.isChecked() ? 1:0));
+                    sendWiFi("s", elements.get(position).getHooks().get(0) + "~" +
+                            (((Switch3ViewHolder) holder).mySwitch1.isChecked() ? 1:0));
                 });
                 ((Switch3ViewHolder) holder).mySwitch2.setOnClickListener(view -> {
-                    sendWiFi("s", elements.get(position).getHooks().get(1) + "~" + (((Switch3ViewHolder) holder).mySwitch2.isChecked() ? 1:0));
+                    sendWiFi("s", elements.get(position).getHooks().get(1) + "~" +
+                            (((Switch3ViewHolder) holder).mySwitch2.isChecked() ? 1:0));
                 });
                 ((Switch3ViewHolder) holder).mySwitch3.setOnClickListener(view -> {
-                    sendWiFi("s", elements.get(position).getHooks().get(2) + "~" + (((Switch3ViewHolder) holder).mySwitch3.isChecked() ? 1:0));
+                    sendWiFi("s", elements.get(position).getHooks().get(2) + "~" +
+                            (((Switch3ViewHolder) holder).mySwitch3.isChecked() ? 1:0));
                 });
                 break;
             case Element.TYPE_RGBLED:
@@ -232,10 +236,13 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public boolean onTouch(View view, MotionEvent motionEvent) {
                         Intent intent = new Intent("swipe");
                         boolean action = true;
-                        if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) intent.putExtra("enable", false);
-                        else if(motionEvent.getAction() == MotionEvent.ACTION_UP) intent.putExtra("enable", true);
+                        if(motionEvent.getAction() == MotionEvent.ACTION_DOWN)
+                            intent.putExtra("enable", false);
+                        else if(motionEvent.getAction() == MotionEvent.ACTION_UP)
+                            intent.putExtra("enable", true);
                         else action = false;
-                        if (action) LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                        if (action)
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                         return false;
                     }
                 });
@@ -246,7 +253,8 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public void onStartTrackingTouch(SeekBar seekBar) { }
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
-                        sendWiFi("i", elements.get(position).getHooks().get(0) + "~" + (((SliderViewHolder) holder).mySlider.getProgress()));
+                        sendWiFi("i", elements.get(position).getHooks().get(0) + "~" +
+                                (((SliderViewHolder) holder).mySlider.getProgress()));
                     }
                 });
                 break;
@@ -275,7 +283,8 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ConsoleViewHolder) holder).setConsoleDetails(elements.get(position));
                 ((ConsoleViewHolder) holder).btnSend.setOnClickListener(view -> {
                     lastConsolePosition = position;
-                    sendWiFi("c", elements.get(position).getHooks().get(0) + "~" + (((ConsoleViewHolder) holder).txtOut.getText().toString()));
+                    sendWiFi("c", elements.get(position).getHooks().get(0) + "~" +
+                            (((ConsoleViewHolder) holder).txtOut.getText().toString()));
                 });
                 ((ConsoleViewHolder) holder).txtOut.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -284,7 +293,8 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         Element thisElement = new Element();
                         for (Element e: elements){
-                            if (e.getType() == Element.TYPE_CONSOLE && e.getHooks().get(0) == ((ConsoleViewHolder) holder).hook) {
+                            if (e.getType() == Element.TYPE_CONSOLE &&
+                                    e.getHooks().get(0) == ((ConsoleViewHolder) holder).hook) {
                                 thisElement = e;
                                 break;
                             }
@@ -447,7 +457,8 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void setLEDDetails(Element element) {
             txtName.setText(element.getNames().get(0));
-            if (element.getValues() != null && element.getValues().size() > 0 && element.getValues().get(0).trim().equals("1")){
+            if (element.getValues() != null && element.getValues().size() > 0 &&
+                    element.getValues().get(0).trim().equals("1")){
                 ledView.setColorFilter(Color.parseColor(element.getNames().get(1)));
             }
             else{

@@ -162,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
                     } else element = lastElement;
                     if (edit) adapter.insertElement(element, editPosition);
                     else adapter.addElement(element);
+
+                    try {
+                        saveElements();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 edit = false;
             }

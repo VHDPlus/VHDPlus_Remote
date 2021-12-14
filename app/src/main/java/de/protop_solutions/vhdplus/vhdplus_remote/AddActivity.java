@@ -90,7 +90,8 @@ public class AddActivity extends AppCompatActivity {
         });
 
         typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.element_array, R.layout.spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.element_array, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_item);
         typeSpinner.setAdapter(adapter);
 
@@ -198,9 +199,10 @@ public class AddActivity extends AppCompatActivity {
             if (s.get(i * 2).contains("Hook")) {
                 if (e == null) {
                     h = 1;
-                    ArrayList<String> hooks = usedHooks[Element.getBaseType(typeSpinner.getSelectedItemPosition(), true)];
-                    for (; (hooks != null && hooks.contains(h + "")) || newHooks.contains((h + "")); h++)
-                        ;
+                    ArrayList<String> hooks = usedHooks[Element.
+                            getBaseType(typeSpinner.getSelectedItemPosition(), true)];
+                    for (; (hooks != null && hooks.contains(h + "")) ||
+                            newHooks.contains((h + "")); h++);
                     setting.setValue(h + "");
                     newHooks.add(h + "");
                 }else{
@@ -229,7 +231,8 @@ public class AddActivity extends AppCompatActivity {
         loadElements();
         for (Element e: elements) {
             for (String s: e.getHooks()) {
-                if (usedHooks[Element.getBaseType(e.getType(),false)-1] == null) usedHooks[Element.getBaseType(e.getType(),false)-1] = new ArrayList<>();
+                if (usedHooks[Element.getBaseType(e.getType(),false)-1] == null)
+                    usedHooks[Element.getBaseType(e.getType(),false)-1] = new ArrayList<>();
                 usedHooks[Element.getBaseType(e.getType(),false)-1].add(s);
             }
         }

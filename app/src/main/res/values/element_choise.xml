@@ -13,7 +13,7 @@
         <item>Slider</item>
         <item>Joystick</item>
         <item>Console</item>
-        <item>Plotter</item>
-        <item>Video</item>
+        <!--<item>Plotter</item>
+        <item>Video</item>-->
     </string-array>
 </resources>

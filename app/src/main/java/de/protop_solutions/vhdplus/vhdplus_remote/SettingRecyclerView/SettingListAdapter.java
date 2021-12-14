@@ -99,7 +99,8 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public void afterTextChanged(Editable editable) {
                 for (int pos = 0; pos < settings.size(); pos++) {
-                    NameViewHolder nameViewHolder = ((NameViewHolder) recyclerView.findViewHolderForAdapterPosition(pos));
+                    NameViewHolder nameViewHolder =
+                            ((NameViewHolder) recyclerView.findViewHolderForAdapterPosition(pos));
                     if (nameViewHolder != null) {
                         String value = nameViewHolder.txtValue.getText().toString();
 
@@ -108,9 +109,11 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         settings.set(pos, set);
 
                         if (settings.get(pos).getName().contains("Hook") && hookAlreadyUsed(value, pos))
-                            nameViewHolder.txtValue.setBackgroundTintList(context.getApplicationContext().getResources().getColorStateList(R.color.red));
+                            nameViewHolder.txtValue.setBackgroundTintList(
+                                    context.getApplicationContext().getResources().getColorStateList(R.color.red));
                         else
-                            nameViewHolder.txtValue.setBackgroundTintList(context.getApplicationContext().getResources().getColorStateList(R.color.white));
+                            nameViewHolder.txtValue.setBackgroundTintList(
+                                    context.getApplicationContext().getResources().getColorStateList(R.color.white));
                     }
                 }
             }
@@ -128,7 +131,8 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ArrayList<String> hooks = usedHooks[Element.getBaseType(type,false)-1];
         if (hooks != null && hooks.contains(hook)) return true;
         for (Setting s: settings) {
-            if (s.getName().contains("Hook") && s.getValue().equals(hook) && settings.indexOf(s) != position) return true;
+            if (s.getName().contains("Hook") && s.getValue().equals(hook) &&
+                    settings.indexOf(s) != position) return true;
         }
         return false;
     }

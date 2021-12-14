@@ -87,7 +87,8 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
             urlConnection.setDoOutput(true);
 
             //Response
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            BufferedReader bufferedReader =
+                    new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String response = "";
             for (String line; (line = bufferedReader.readLine()) != null;) response += line;
             return response;
