@@ -44,10 +44,16 @@ public class WiFiConnection {
     private Context context;
     //Elements in recycler view
     private ArrayList<Element> elements;
+    //Callback
+    OnTaskCompleted listener;
 
     public WiFiConnection(Context context, ArrayList<Element> elements){
         this.context = context;
         this.elements = elements;
+    }
+
+    public void setListener(OnTaskCompleted listener) {
+        this.listener = listener;
     }
 
     /**
@@ -75,7 +81,7 @@ public class WiFiConnection {
      */
     public void sendData(String ipAddress, String type, String data) {
         WiFiRequest wifiRequest = new WiFiRequest(this.context, ipAddress,
-                "send", type, data, true);
+                "send", type, data, true, listener);
         wifiRequest.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -111,7 +117,7 @@ public class WiFiConnection {
         }
         if (hooks != ""){
             WiFiRequest connectionAsyncTask = new WiFiRequest(this.context, ipAddress,
-                    "read", "hooks", hooks, false);
+                    "read", "hooks", hooks, false, listener);
             connectionAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }

@@ -57,17 +57,20 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
     private final boolean showError;
     //Context of MainActivity
     private final Context context;
+    //Callback
+    private OnTaskCompleted listener;
 
     //Message of Exception during execution
     private String errorMsg;
 
-    public WiFiRequest(Context context, String ipAddress, String task, String type, String data, boolean showError) {
+    public WiFiRequest(Context context, String ipAddress, String task, String type, String data, boolean showError, OnTaskCompleted listener) {
         this.context = context;
         this.ipAddress = ipAddress;
         this.task = task;
         this.type = type;
         this.data = data;
         this.showError = showError;
+        this.listener = listener;
     }
 
     /**
@@ -84,6 +87,8 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
             String urlString = "http://" + ipAddress + "/" + task + "?" + type + "=" + data;
             URL url = new URL(urlString);
             URLConnection urlConnection = url.openConnection();
+            urlConnection.setReadTimeout(4000);
+            urlConnection.setConnectTimeout(4000);
             urlConnection.setDoOutput(true);
 
             //Response
@@ -108,19 +113,13 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
         super.onPostExecute(result);
         //Log.v("WiFi", result);
         if (errorMsg == null && result.trim().length() > 0) {
-            Intent intent = new Intent("wifi");
-            intent.putExtra("error", false);
-            intent.putExtra("response", result);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            listener.OnTaskCompleted(result, false);
         } else {
             if (errorMsg != null) {
                 if (showError)
                     Toast.makeText(context, "WiFi Error: " + errorMsg, Toast.LENGTH_LONG).show();
             }
-
-            Intent intent = new Intent("wifi");
-            intent.putExtra("error", true);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            listener.OnTaskCompleted(result, false);
         }
     }
 

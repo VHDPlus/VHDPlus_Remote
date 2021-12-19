@@ -87,6 +87,7 @@ public class ElementListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.elements = elements;
         wifi = new WiFiConnection(context, elements);
         wifiTimer = new WiFiTimer(context, this, wifi, ip, 500);
+        wifi.setListener(wifiTimer);
         this.ip = ip;
     }
 

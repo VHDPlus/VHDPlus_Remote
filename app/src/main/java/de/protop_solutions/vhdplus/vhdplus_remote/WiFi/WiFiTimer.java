@@ -45,7 +45,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.Element;
 import de.protop_solutions.vhdplus.vhdplus_remote.ElementRecyclerView.ElementListAdapter;
 
-public class WiFiTimer {
+public class WiFiTimer implements OnTaskCompleted {
 
     //Context of MainActivity
     private Context context;
@@ -63,9 +63,6 @@ public class WiFiTimer {
     TimerTask timerTask;
     //Used for timer task
     final Handler handler = new Handler();
-
-    //Receives response from wifi module
-    BroadcastReceiver wifiReceiver;
 
     //Time after task is executed when connection is present
     int defaultDelayLength;
@@ -101,18 +98,12 @@ public class WiFiTimer {
             timer = new Timer();
             initializeTimerTask();
             timer.schedule(timerTask, delayLength, delayLength);
-
-            wifiReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    boolean error = intent.getBooleanExtra("error", true);
-                    String response = "";
-                    if (!error) response = intent.getStringExtra("response");
-                    responseHandler(error, response);
-                }
-            };
-            LocalBroadcastManager.getInstance(context).registerReceiver(wifiReceiver, new IntentFilter("wifi"));
         }
+    }
+
+    @Override
+    public void OnTaskCompleted(String response, boolean error) {
+        responseHandler(error, response);
     }
 
     /**
@@ -122,8 +113,6 @@ public class WiFiTimer {
         if (timer != null) {
             timer.cancel();
             timer = null;
-
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(wifiReceiver);
         }
     }
 
@@ -153,10 +142,6 @@ public class WiFiTimer {
                                 if (noInternet)
                                     Toast.makeText(context, "Connected With Internet!", Toast.LENGTH_LONG).show();
                                 noInternet = false;
-                                if (lastRequestTime - lastResponseTime > delayLength) {
-                                    handleReceiveError();
-                                }
-                                lastRequestTime = System.currentTimeMillis();
                                 wifi.requestData(ip);
                             } else if (!noInternet) {
                                 Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
@@ -191,7 +176,7 @@ public class WiFiTimer {
      * @param response
      */
     private void responseHandler(boolean error, String response){
-        if (error) {
+        if (error || response == "") {
             handleReceiveError();
         }
         else{
