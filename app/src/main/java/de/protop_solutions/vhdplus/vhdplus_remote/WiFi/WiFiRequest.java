@@ -111,15 +111,15 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        //Log.v("WiFi", result);
         if (errorMsg == null && result.trim().length() > 0) {
             listener.OnTaskCompleted(result, false);
         } else {
             if (errorMsg != null) {
                 if (showError)
-                    Toast.makeText(context, "WiFi Error: " + errorMsg, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "WiFi Error: " + errorMsg,
+                            Toast.LENGTH_LONG).show();
             }
-            listener.OnTaskCompleted(result, false);
+            listener.OnTaskCompleted(result, true);
         }
     }
 

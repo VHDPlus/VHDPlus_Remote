@@ -69,10 +69,6 @@ public class WiFiTimer implements OnTaskCompleted {
     //Time after task is executed
     int delayLength;
 
-    //Used to check for connection problem
-    long lastRequestTime;
-    long lastResponseTime;
-
     //Used to check if connection problem changed
     boolean noResponse;
     boolean noInternet;
@@ -85,7 +81,6 @@ public class WiFiTimer implements OnTaskCompleted {
         this.defaultDelayLength = delayLength;
         this.ip = ip;
 
-        lastResponseTime = System.currentTimeMillis();
         noResponse = false;
         noInternet = false;
     }
@@ -140,11 +135,13 @@ public class WiFiTimer implements OnTaskCompleted {
                         if (WiFiConnection.listHasReceivingElement(adapter.getElements())) {
                             if (wifi.checkConnection()) {
                                 if (noInternet)
-                                    Toast.makeText(context, "Connected With Internet!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "Connected With Internet!",
+                                            Toast.LENGTH_LONG).show();
                                 noInternet = false;
                                 wifi.requestData(ip);
                             } else if (!noInternet) {
-                                Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "No Internet Connection!",
+                                        Toast.LENGTH_LONG).show();
                                 noInternet = true;
                             }
                         }
@@ -184,7 +181,6 @@ public class WiFiTimer implements OnTaskCompleted {
                 Toast.makeText(context, "WiFi Module Connected!", Toast.LENGTH_LONG).show();
 
             noResponse = false;
-            lastResponseTime = System.currentTimeMillis();
 
             if (delayLength > defaultDelayLength){
                 delayLength = defaultDelayLength;
