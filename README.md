@@ -33,3 +33,41 @@ R~1~#FF0000~text~text2
 # Overview
 ![Overview Image](Overview.png)
 
+## Connect Activity
+In this code the last IP and/or Port settings are loaded and the new settings are saved
+
+## Legal Notice
+Displays legal notice
+
+## Main Activity
+In this code the main recycler view is managed, the wifi connection is controlled,
+the listener for the "Add Element" button is implemented and this file contains
+the communication between the AddElement Activity
+
+## Drag and Drop Callback
+This class handles element swap when moved up or down
+
+## Swipe Callback
+This class draws a colored square and an icon next to the element that is swiped to one side
+
+## Element List Adapter
+Recycler View adapter for element list
+Handles different types of elements in the recycler view
+
+## WiFi Connection
+Implements functions to check internet connection, send data to wifi module
+and request data from wifi module
+
+## WiFi Request
+This code allows to do a request to the WiFi module.
+The OnTaskCompleted callback return the response and if an error occurred
+
+## WiFi Timer
+This code implements a timer that updates the elements with values from the wifi module
+
+## Add Activity
+In this code the "New Element" selector and the "Element Settings" List is managed.
+Also the communication to the MainActivity is implemented
+
+## Setting List Adapter
+Recycler View adapter for element setting list
