@@ -24,8 +24,7 @@
 
     Description:
     This code allows to do a request to the WiFi module.
-    The wifi error broadcast returns if the request was successful.
-    The wifi response broadcast returns the response of the WiFi module
+    The OnTaskCompleted callback return the response and if an error occurred
 */
 
 package de.protop_solutions.vhdplus.vhdplus_remote.WiFi;
@@ -105,7 +104,7 @@ class WiFiRequest extends AsyncTask<Void, Void, String> {
     }
 
     /**
-     * Creates broadcast message with wifi module response
+     * Call callback with wifi module response
      * @param result
      */
     @Override
