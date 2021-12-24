@@ -33,6 +33,8 @@ R~1~#FF0000~text~text2
 # Overview
 ![Overview Image](Overview.png)
 
+## Java
+
 ### Connect Activity
 In this code the last IP and/or Port settings are loaded and the new settings are saved
 
@@ -71,3 +73,27 @@ Also the communication to the MainActivity is implemented
 
 ### Setting List Adapter
 Recycler View adapter for element setting list
+
+## Res
+
+### Layout
+Starting with activity_ -> Activity layouts </br>
+Ending with _layout -> Layout for elements in MainActivity recycler view
+spinner_item -> Layout for spinner in AddActivity
+string_setting_layout -> Layout for elements in AddActivity recycler view
+
+### Colors
+Used colors for app
+
+### Dimens
+Layout dimensions for elements
+
+### Element Choise
+Choise of elements in AddActivity
+
+### Element Settings
+Settings for elements in AddActivity
+Two items = one entry (first lable, second value)
+
+### Strings
+Strings in App
